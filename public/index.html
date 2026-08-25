@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="am">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TikTok Coin Exchange</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background: #f0f2f5; }
+    .container { max-width: 600px; margin: 0 auto; }
+    .card { background: white; padding: 20px; border-radius: 10px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    button { cursor: pointer; padding: 10px 18px; background: #fe2c55; color: white; border: none; border-radius: 5px; font-weight: bold; }
+    button:disabled { background: #cccccc; cursor: not-allowed; }
+    input { width: 90%; padding: 10px; margin: 8px 0; border: 1px solid #ccc; border-radius: 5px; }
+    .step { display: none; }
+    .active { display: block; }
+    .buy-box { background: #eef7ff; border: 1px solid #007bff; padding: 15px; border-radius: 8px; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- STEP 1: WELCOME SCREEN -->
+  <div id="step-welcome" class="card step active">
+    <h2>👋 እንኳን ደህና መጡ!</h2>
+    <p>ወደ ቲክቶክ ቪዲዮ ማሳደጊያ እና የኮይን ልውውጥ ድረ-ገጽ እንኳን በደህና መጡ።</p>
+    <p>በቀላሉ ቪዲዮዎችን በማየት ኮይን ይሰብስቡ፤ ወይም ኮይን በመግዛት የቪዲዮዎን እይታ (Views) ያሳድጉ!</p>
+    <button onclick="goToStep('step-auth')">Next (ቀጥል) ➔</button>
+  </div>
+
+  <!-- STEP 2: REGISTRATION -->
+  <div id="step-auth" class="card step">
+    <h2>መለያ ይፍጠሩ (Sign Up)</h2>
+    <p>በቲክቶክ አካውንትዎ የተከፈተውን ኢሜይል ያስገቡ፡</p>
+    <input type="email" id="emailInput" placeholder="example@gmail.com">
+    <button onclick="register()">ተመዝገብ (Register)</button>
+  </div>
+
+  <!-- STEP 3: DASHBOARD -->
+  <div id="step-dashboard" class="step">
+    
+    <div class="card">
+      <p>👤 ኢሜይል: <b id="userEmail"></b></p>
+      <h2>የእርስዎ ኮይን: <span id="coins" style="color: #fe2c55;">0</span> 🪙</h2>
+      <small style="color: green;">🎁 የ 10 Coin ነጻ ስጦታ ተጨምሮልዎታል!</small>
+    </div>
+
+    <!-- Buy Coins -->
+    <div class="card buy-box">
+      <h3>🛒 ኮይን ይግዙ (Buy Coins)</h3>
+      <p><b>ዋጋ፡ 1 Coin = 1 Birr</b></p>
+      <ul>
+        <li>50 Coin = <b>50 Birr</b></li>
+        <li>100 Coin = <b>100 Birr</b></li>
+      </ul>
+      <p><b>Telebirr / CBE ቁጥር:</b> 0900XXXXXX (የአካውንት ስም)</p>
+      <small>* ክፍያ ሲፈጽሙ Transaction ID ለቴሌግራም አድሚናችን ይላኩ።</small>
+    </div>
+
+    <!-- Post Video -->
+    <div class="card">
+      <h3>አዲስ የቲክቶክ ቪዲዮ ያቅቱ</h3>
+      <p style="color: #666; font-size: 13px;">* ቪዲዮ ለመለቀቅ ቢያንስ 100 ኮይን ያስፈልጋል (1 Coin = 2 Views)</p>
+      
+      <input type="text" id="linkInput" placeholder="https://www.tiktok.com/@user/video/123456789">
+      <input type="number" id="budgetInput" placeholder="የኮይን መጠን (ቢያንስ 100)" oninput="calculateReach()">
+      
+      <p id="reachEstimate" style="font-weight: bold; color: #007bff;"></p>
+      <button onclick="addTask()">ቪዲዮውን ለጥፍ</button>
+    </div>
+
+    <!-- Video Embed Player -->
+    <div id="playerContainer" class="card" style="display: none; text-align: center; background: #111; color: white;">
+      <h3>ቪዲዮውን ይመልከቱ</h3>
+      <iframe id="tiktokPlayer" width="325" height="580" src="" frameborder="0" allowfullscreen></iframe>
+      <p id="timerStatus" style="font-size: 18px; color: #fe2c55;"></p>
+      <button id="claimBtn" disabled>10 ኮይን ተቀበል (Claim 10 Coins)</button>
+    </div>
+
+    <!-- Task List -->
+    <div class="card">
+      <h3>የሚሰሩ ስራዎች (ቪዲዮ አይተው 10 ኮይን ያግኙ)</h3>
+      <div id="taskList"></div>
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+  function goToStep(stepId) {
+    document.querySelectorAll('.step').forEach(el => el.classList.remove('active'));
+    document.getElementById(stepId).classList.add('active');
+  }
+
+  async function register() {
+    const email = document.getElementById('emailInput').value;
+    if (!email) return alert("እባክዎን ኢሜይል ያስገቡ!");
+
+    const res = await fetch('/api/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email })
+    });
+
+    const data = await res.json();
+    if (data.success) {
+      alert("ምዝገባው ተጠናቋል! 10 Coin ነጻ ስጦታ አግኝተዋል።");
+      goToStep('step-dashboard');
+      loadUserData();
+    }
+  }
+
+  async function loadUserData() {
+    const res = await fetch('/api/user');
+    const user = await res.json();
+
+    if (user.email) {
+      document.getElementById('userEmail').innerText = user.email;
+      document.getElementById('coins').innerText = user.coins;
+      loadTasks();
+    }
+  }
+
+  function calculateReach() {
+    const budget = parseInt(document.getElementById('budgetInput').value) || 0;
+    const reachEstimate = document.getElementById('reachEstimate');
+
+    if (budget < 100) {
+      reachEstimate.innerText = "ቢያንስ 100 ኮይን ማስገባት አለብዎት!";
+      reachEstimate.style.color = "red";
+    } else {
+      const views = budget * 2;
+      reachEstimate.innerText = `ይህ ቪዲዮ ለ ${views} ሰው ይደርሳል (Views)።`;
+      reachEstimate.style.color = "#007bff";
+    }
+  }
+
+  async function addTask() {
+    const url = document.getElementById('linkInput').value;
+    const budget = parseInt(document.getElementById('budgetInput').value);
+
+    if (!url || !budget || budget < 100) {
+      alert("እባክዎን ትክክለኛ ሊንክ እና ቢያንስ 100 ኮይን ያስገቡ!");
+      return;
+    }
+
+    const res = await fetch('/api/add-task', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ url, budget })
+    });
+
+    const data = await res.json();
+    if (data.error) {
+      alert(data.error);
+    } else {
+      alert("ቪዲዮዎ በትክክል ተለጥፏል!");
+      document.getElementById('linkInput').value = '';
+      document.getElementById('budgetInput').value = '';
+      document.getElementById('reachEstimate').innerText = '';
+      loadUserData();
+    }
+  }
+
+  async function loadTasks() {
+    const res = await fetch('/api/tasks');
+    const tasks = await res.json();
+    const taskList = document.getElementById('taskList');
+    taskList.innerHTML = '';
+
+    if (tasks.length === 0) {
+      taskList.innerHTML = '<p>በአሁኑ ሰዓት ምንም ስራ የለም።</p>';
+      return;
+    }
+
+    tasks.forEach(task => {
+      const remaining = task.maxCompletions - task.completedCount;
+      taskList.innerHTML += `
+        <div style="border-bottom: 1px solid #eee; padding: 10px 0;">
+          <p><b>የቲክቶክ ቪዲዮ</b> (+10 Coin) — የቀረ ቦታ: ${remaining}/${task.maxCompletions} ሰው</p>
+          <button onclick="playVideo('${task.url}', ${task.id})">ቪዲዮውን ተመልከት</button>
+        </div>
+      `;
+    });
+  }
+
+  function extractVideoId(url) {
+    const match = url.match(/video\/(\d+)/);
+    return match ? match[1] : null;
+  }
+
+  function playVideo(url, taskId) {
+    const videoId = extractVideoId(url);
+    if (!videoId) return alert("ትክክለኛ የቪዲዮ ሊንክ አይደለም!");
+
+    const playerContainer = document.getElementById('playerContainer');
+    const iframe = document.getElementById('tiktokPlayer');
+    const timerStatus = document.getElementById('timerStatus');
+    const claimBtn = document.getElementById('claimBtn');
+
+    iframe.src = `https://www.tiktok.com/embed/v2/${videoId}`;
+    playerContainer.style.display = 'block';
+    claimBtn.disabled = true;
+
+    let timeLeft = 10;
+    timerStatus.innerText = `እባክዎን ቪዲዮውን ይከታተሉ (${timeLeft}s)...`;
+
+    const timer = setInterval(() => {
+      timeLeft--;
+      timerStatus.innerText = `እባክዎን ቪዲዮውን ይከታተሉ (${timeLeft}s)...`;
+
+      if (timeLeft <= 0) {
+        clearInterval(timer);
+        timerStatus.innerText = "ምልከታው ተጠናቋል!";
+        claimBtn.disabled = false;
+        claimBtn.onclick = () => claimReward(taskId);
+      }
+    }, 1000);
+  }
+
+  async function claimReward(taskId) {
+    const res = await fetch('/api/complete-task', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ taskId })
+    });
+
+    const data = await res.json();
+    if (data.success) {
+      alert("10 Coin በትክክል ተጨምሮልዎታል!");
+      document.getElementById('playerContainer').style.display = 'none';
+      document.getElementById('tiktokPlayer').src = '';
+      loadUserData();
+    } else {
+      alert(data.error);
+    }
+  }
+</script>
+
+</body>
+</html>
