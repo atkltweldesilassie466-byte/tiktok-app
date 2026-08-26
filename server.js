@@ -1,89 +1,126 @@
 const express = require('express');
+const mongoose = require('mongoose');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
 app.use(express.static('public'));
 
-let currentUser = null; 
-let tasks = [];
+// የ MongoDB ዳታቤዝ ግንኙነት
+const MONGODB_URI = process.env.MONGODB_URI;
+mongoose.connect(MONGODB_URI)
+  .then(() => console.log('MongoDB Successfully Connected!'))
+  .catch(err => console.error('MongoDB Connection Error:', err));
 
-// 1. ምዝገባ (Email Registration + 10 Free Coins)
-app.post('/api/register', (req, res) => {
-  const { email } = req.body;
-  if (!email) {
-    return res.status(400).json({ error: "እባክዎን ኢሜይል ያስገቡ!" });
-  }
-
-  currentUser = {
-    email: email,
-    coins: 10
-  };
-
-  res.json({ success: true, user: currentUser });
+// Schema እና Model
+const userSchema = new mongoose.Schema({
+  email: { type: String, required: true, unique: true },
+  coins: { type: Number, default: 10 }
 });
 
-// 2. የተጠቃሚ መረጃ ማሳወቂያ
-app.get('/api/user', (req, res) => {
-  res.json(currentUser || { loggedIn: false });
+const taskSchema = new mongoose.Schema({
+  url: { type: String, required: true },
+  budget: { type: Number, required: true },
+  maxCompletions: { type: Number, required: true },
+  completedCount: { type: Number, default: 0 },
+  rewardPerWatch: { type: Number, default: 10 },
+  completedBy: [{ type: String }]
 });
 
-// 3. አዲስ ቪዲዮ መለቀቂያ (ከ 100 ኮይን ጀምሮ | 1 Coin = 2 Views)
-app.post('/api/add-task', (req, res) => {
-  if (!currentUser) {
-    return res.status(401).json({ error: "መጀመሪያ ይግቡ!" });
+const User = mongoose.model('User', userSchema);
+const Task = mongoose.model('Task', taskSchema);
+
+// APIs
+app.post('/api/register', async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email) return res.status(400).json({ error: "እባክዎን ኢሜይል ያስገቡ!" });
+
+    let user = await User.findOne({ email });
+    if (!user) {
+      user = new User({ email, coins: 10 });
+      await user.save();
+    }
+    res.json({ success: true, user });
+  } catch (err) {
+    res.status(500).json({ error: "የሰርቨር ስህተት ተፈጥሯል!" });
   }
-
-  const { url, budget } = req.body;
-
-  if (budget < 100) {
-    return res.status(400).json({ error: "ቪዲዮ ለመለቀቅ ቢያንስ 100 ኮይን ያስፈልጋል!" });
-  }
-
-  if (currentUser.coins < budget) {
-    return res.status(400).json({ error: "በቂ ኮይን የለዎትም!" });
-  }
-
-  const maxCompletions = budget * 2; // 1 Coin = 2 Views
-  currentUser.coins -= budget;
-
-  const newTask = {
-    id: Date.now(),
-    url,
-    budget,
-    maxCompletions,
-    completedCount: 0,
-    rewardPerWatch: 10
-  };
-
-  tasks.push(newTask);
-  res.json({ success: true, coins: currentUser.coins });
 });
 
-// 4. የነበሩ ስራዎች ዝርዝር
-app.get('/api/tasks', (req, res) => {
-  const activeTasks = tasks.filter(t => t.completedCount < t.maxCompletions);
-  res.json(activeTasks);
+app.get('/api/user', async (req, res) => {
+  try {
+    const { email } = req.query;
+    const user = await User.findOne({ email });
+    if (!user) return res.json({ loggedIn: false });
+    res.json(user);
+  } catch (err) {
+    res.status(500).json({ error: "መረጃ ማግኘት አልተቻለም!" });
+  }
 });
 
-// 5. ቪዲዮ አይቶ 10 ኮይን መቀበያ
-app.post('/api/complete-task', (req, res) => {
-  if (!currentUser) {
-    return res.status(401).json({ error: "መጀመሪያ ይግቡ!" });
+app.post('/api/add-task', async (req, res) => {
+  try {
+    const { email, url, budget } = req.body;
+    if (budget < 100) return res.status(400).json({ error: "ቪዲዮ ለመለቀቅ ቢያንስ 100 ኮይን ያስፈልጋል!" });
+
+    const user = await User.findOne({ email });
+    if (!user || user.coins < budget) {
+      return res.status(400).json({ error: "በቂ ኮይን የለዎትም!" });
+    }
+
+    user.coins -= budget;
+    await user.save();
+
+    const newTask = new Task({
+      url,
+      budget,
+      maxCompletions: budget * 2,
+      rewardPerWatch: 10
+    });
+    await newTask.save();
+
+    res.json({ success: true, coins: user.coins });
+  } catch (err) {
+    res.status(500).json({ error: "ቪዲዮውን መለቀቅ አልተቻለም!" });
   }
+});
 
-  const { taskId } = req.body;
-  const task = tasks.find(t => t.id === taskId);
+app.get('/api/tasks', async (req, res) => {
+  try {
+    const tasks = await Task.find({ $expr: { $lt: ["$completedCount", "$maxCompletions"] } });
+    res.json(tasks);
+  } catch (err) {
+    res.status(500).json({ error: "ስራዎችን ማግኘት አልተቻለም!" });
+  }
+});
 
-  if (task && task.completedCount < task.maxCompletions) {
+app.post('/api/complete-task', async (req, res) => {
+  try {
+    const { email, taskId } = req.body;
+    const task = await Task.findById(taskId);
+    const user = await User.findOne({ email });
+
+    if (!task || !user) return res.status(404).json({ error: "መረጃው አልተገኘም!" });
+
+    if (task.completedBy.includes(email)) {
+      return res.status(400).json({ error: "ይህንን ቪዲዮ ቀደም ብለው ተመልከተዋል!" });
+    }
+
+    if (task.completedCount >= task.maxCompletions) {
+      return res.status(400).json({ error: "የዚህ ቪዲዮ የስራ ቦታ አልቋል!" });
+    }
+
     task.completedCount += 1;
-    currentUser.coins += task.rewardPerWatch;
-    return res.json({ success: true, coins: currentUser.coins });
+    task.completedBy.push(email);
+    await task.save();
+
+    user.coins += task.rewardPerWatch;
+    await user.save();
+
+    res.json({ success: true, coins: user.coins });
+  } catch (err) {
+    res.status(500).json({ error: "ስራውን ማጠናቀቅ አልተቻለም!" });
   }
-
-  res.status(400).json({ error: "ስራው አልቋል ወይም አልተገኘም!" });
 });
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
