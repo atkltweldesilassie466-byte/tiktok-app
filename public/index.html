@@ -61,7 +61,9 @@
       <h3>አዲስ የቲክቶክ ቪዲዮ ያቅቱ</h3>
       <p style="color: #666; font-size: 13px;">* ቪዲዮ ለመለቀቅ ቢያንስ 100 ኮይን ያስፈልጋል (1 Coin = 2 Views)</p>
       
-      <input type="text" id="linkInput" placeholder="https://www.tiktok.com/@user/video/123456789">
+      <input type="text" id="linkInput" placeholder="https://www.tiktok.com/@user/video/71234567890">
+      <small style="color: #555;">💡 ማሳሰቢያ፦ ከብራውዘር/Chrome ሙሉውን የቪዲዮ ሊንክ ኮፒ አድርገው ያስገቡ።</small>
+      <br><br>
       <input type="number" id="budgetInput" placeholder="የኮይን መጠን (ቢያንስ 100)" oninput="calculateReach()">
       
       <p id="reachEstimate" style="font-weight: bold; color: #007bff;"></p>
@@ -201,14 +203,20 @@
     });
   }
 
+  // የቪዲዮ ID ቁጥርን የመለያ ኮድ (የተሻሻለ)
   function extractVideoId(url) {
-    const match = url.match(/video\/(\d+)/);
+    // ማንኛውንም ከ 15 እስከ 20 ዲጂት ያለውን የቪዲዮ ቁጥር ይፈልጋል
+    const match = url.match(/(\d{15,20})/);
     return match ? match[1] : null;
   }
 
   function playVideo(url, taskId) {
     const videoId = extractVideoId(url);
-    if (!videoId) return alert("ትክክለኛ የቪዲዮ ሊንክ አይደለም!");
+    
+    if (!videoId) {
+      alert("እባክዎን ከ Chrome ወይም Safari ብራውዘር ላይ የተኮረጀ ሙሉ የቲክቶክ ቪዲዮ ሊንክ ይጠቀሙ!");
+      return;
+    }
 
     const playerContainer = document.getElementById('playerContainer');
     const iframe = document.getElementById('tiktokPlayer');
