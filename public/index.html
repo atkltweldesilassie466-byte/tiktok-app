@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="am">
 <head>
@@ -32,7 +33,8 @@
     .tab-btn.active-tab { background: #fe2c55; color: white; }
 
     .buy-box { background: #eef7ff; border: 1px solid #007bff; padding: 15px; border-radius: 10px; }
-    .telegram-btn { background: #0088cc; color: white; text-align: center; text-decoration: none; display: block; padding: 12px; border-radius: 8px; font-weight: bold; margin-top: 10px; }
+    .tg-box { background: #e8f4f9; border: 1px solid #0088cc; padding: 15px; border-radius: 10px; margin-bottom: 15px; text-align: center; }
+    .tg-link { color: #0088cc; font-weight: bold; text-decoration: none; font-size: 16px; }
   </style>
 </head>
 <body>
@@ -64,10 +66,10 @@
       <div class="tab-btn active-tab" onclick="switchTab('tab-profile')">👤 መረጃ</div>
       <div class="tab-btn" onclick="switchTab('tab-earn')">🎬 ስራዎች</div>
       <div class="tab-btn" onclick="switchTab('tab-post')">🚀 ቪዲዮ</div>
-      <div class="tab-btn" onclick="switchTab('tab-telegram')">💬 ቴሌግራም</div>
+      <div class="tab-btn" onclick="switchTab('tab-feedback')">📝 አስተያየት</div>
     </div>
 
-    <!-- TAB 1: PROFILE & BUY COINS -->
+    <!-- TAB 1: PROFILE -->
     <div id="tab-profile" class="tab-content card">
       <button class="logout-btn" onclick="logout()">መውጫ (Logout) 🚪</button>
       <h3>👤 የርስዎ መረጃ</h3>
@@ -82,9 +84,6 @@
           <li>50 Coins = <b>25 Birr</b></li>
           <li>100 Coins = <b>50 Birr</b></li>
         </ul>
-        <p><b>የክፍያ ስም:</b> Atkilt Weldesilassie</p>
-        <p><b>Telebirr / CBE ስልክ ቁጥር:</b> <b style="color: #007bff; font-size: 18px;">0975896348</b></p>
-        <small>* ብር ሲልኩ በቴሌግራም የላኩበትን ደረሰኝ አያይዘው ይላኩልን።</small>
       </div>
     </div>
 
@@ -118,19 +117,16 @@
       <div id="myVideosList"></div>
     </div>
 
-    <!-- TAB 4: TELEGRAM & FEEDBACK -->
-    <div id="tab-telegram" class="tab-content card" style="display:none;">
-      <div style="text-align: center;">
-        <h3>💬 በቴሌግራም ኮይን ለመግዛት</h3>
-        <p>በቀጥታ ከአድሚኑ ኮይን ለመግዛት ወይም ለተጨማሪ ጥያቄዎች በቴሌግራም ያናግሩን።</p>
-        <p><b>Username:</b> @wizzy_ermi</p>
-        <a href="https://t.me/wizzy_ermi" target="_blank" class="telegram-btn">ወደ ቴሌግራም ይመሩ ➔</a>
+    <!-- TAB 4: FEEDBACK & TELEGRAM -->
+    <div id="tab-feedback" class="tab-content card" style="display:none;">
+      <h3>📝 አስተያየት እና ጥያቄ</h3>
+      
+      <div class="tg-box">
+        <p style="margin-top:0; font-weight:bold;">💬 በቴሌግራም በቀጥታ ለማናገር፡</p>
+        <a href="https://t.me/wizzy_ermi" target="_blank" class="tg-link">👉 Telegram: @wizzy_ermi</a>
       </div>
 
-      <hr style="margin: 25px 0;">
-
-      <h3>📝 አስተያየት ወይም ጥያቄ ላክ</h3>
-      <p style="font-size: 13px; color: #666;">ማንኛውም አይነት አስተያየት ካለዎት እዚህ ይጻፉልን፦</p>
+      <p style="font-size: 13px; color: #666;">ወይም እዚሁ ድረ-ገጽ ላይ አስተያየትዎን መላክ ይችላሉ፦</p>
       <textarea id="feedbackInput" rows="4" placeholder="አስተያየትዎን እዚህ ይጻፉ..."></textarea>
       <button onclick="sendFeedback()">አስተያየት ላክ (Send Feedback)</button>
     </div>
