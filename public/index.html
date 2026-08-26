@@ -20,7 +20,9 @@
     button { cursor: pointer; padding: 12px 20px; background: #fe2c55; color: white; border: none; border-radius: 8px; font-weight: bold; width: 100%; font-size: 16px; transition: 0.3s; }
     button:hover { background: #e02648; }
     button:disabled { background: #cccccc; cursor: not-allowed; }
-    input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ccc; border-radius: 8px; font-size: 15px; }
+    .logout-btn { background: #666; padding: 6px 12px; font-size: 13px; width: auto; float: right; border-radius: 5px; }
+    .logout-btn:hover { background: #333; }
+    input, textarea { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ccc; border-radius: 8px; font-size: 15px; font-family: inherit; }
     
     /* Step Display Controls */
     .step { display: none; }
@@ -28,7 +30,7 @@
 
     /* Navigation Tabs */
     .tab-nav { display: flex; justify-content: space-around; background: #fff; padding: 10px; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-    .tab-btn { background: none; color: #555; font-size: 13px; padding: 8px; border-radius: 6px; text-align: center; font-weight: bold; width: 23%; }
+    .tab-btn { background: none; color: #555; font-size: 13px; padding: 8px; border-radius: 6px; text-align: center; font-weight: bold; width: 23%; cursor: pointer; }
     .tab-btn.active-tab { background: #fe2c55; color: white; }
 
     .buy-box { background: #eef7ff; border: 1px solid #007bff; padding: 15px; border-radius: 10px; }
@@ -39,7 +41,7 @@
 
 <div class="container">
 
-  <!-- STEP 1: WELCOME SCREEN WITH BACKGROUND -->
+  <!-- STEP 1: WELCOME SCREEN -->
   <div id="step-welcome" class="card step active" style="text-align: center; margin-top: 50px;">
     <h2>👋 እንኳን ደህና መጡ!</h2>
     <p>ወደ ቲክቶክ ቪዲዮ ማሳደጊያ እና የኮይን ልውውጥ ድረ-ገጽ እንኳን በደህና መጡ።</p>
@@ -60,7 +62,7 @@
   <!-- STEP 3: MAIN DASHBOARD -->
   <div id="step-dashboard" class="step">
     
-    <!-- Navigation Tabs (ወደ ጎን የሚቀያየሩ 4 ገጾች) -->
+    <!-- Navigation Tabs -->
     <div class="tab-nav">
       <div class="tab-btn active-tab" onclick="switchTab('tab-profile')">👤 መረጃ</div>
       <div class="tab-btn" onclick="switchTab('tab-earn')">🎬 ስራዎች</div>
@@ -70,6 +72,7 @@
 
     <!-- TAB 1: PROFILE & BUY COINS -->
     <div id="tab-profile" class="tab-content card">
+      <button class="logout-btn" onclick="logout()">መውጫ (Logout) 🚪</button>
       <h3>👤 የርስዎ መረጃ</h3>
       <p>ኢሜይል: <b id="userEmail"></b></p>
       <h2>የእርስዎ ኮይን: <span id="coins" style="color: #fe2c55;">0</span> 🪙</h2>
@@ -88,10 +91,10 @@
       </div>
     </div>
 
-    <!-- TAB 2: EARN COINS (TASKS ONE BY ONE WITH 20s TIMER) -->
+    <!-- TAB 2: EARN COINS (TASKS ONE BY ONE) -->
     <div id="tab-earn" class="tab-content card" style="display:none;">
       <h3>🎬 ቪዲዮዎችን አይተው ኮይን ያግኙ</h3>
-      <p style="font-size: 13px; color: #666;">* ለእያንዳንዱ ያዩት ቪዲዮ <b>10 ኮይን</b> ያገኛሉ። ቪዲዮው ሲያልቅ ቀጣዩ አውቶማቲክ ይመጣል!</p>
+      <p style="font-size: 13px; color: #666;">* ለእያንዳንዱ ያዩት ቪዲዮ <b>10 ኮይን</b> ያገኛሉ።</p>
       
       <div id="singleTaskArea" style="text-align: center;">
         <p id="taskStatusText">ስራዎች በመጫን ላይ ናቸው...</p>
@@ -118,12 +121,22 @@
       <div id="myVideosList"></div>
     </div>
 
-    <!-- TAB 4: TELEGRAM BUYING PAGE -->
-    <div id="tab-telegram" class="tab-content card" style="display:none; text-align: center;">
-      <h3>💬 በቴሌግራም ኮይን ለመግዛት</h3>
-      <p>በቀጥታ ከአድሚኑ ኮይን ለመግዛት ወይም ለተጨማሪ ጥያቄዎች በቴሌግራም ያናግሩን።</p>
-      <p><b>Username:</b> @wizzy_ermi9i</p>
-      <a href="https://t.me/wizzy_ermi9i" target="_blank" class="telegram-btn">ወደ ቴሌግራም ይመሩ ➔</a>
+    <!-- TAB 4: TELEGRAM & FEEDBACK -->
+    <div id="tab-telegram" class="tab-content card" style="display:none;">
+      <div style="text-align: center;">
+        <h3>💬 በቴሌግራም ኮይን ለመግዛት</h3>
+        <p>በቀጥታ ከአድሚኑ ኮይን ለመግዛት ወይም ለተጨማሪ ጥያቄዎች በቴሌግራም ያናግሩን።</p>
+        <p><b>Username:</b> @wizzy_ermi9i</p>
+        <a href="https://t.me/wizzy_ermi9i" target="_blank" class="telegram-btn">ወደ ቴሌግራም ይመሩ ➔</a>
+      </div>
+
+      <hr style="margin: 25px 0;">
+
+      <!-- FEEDBACK FORM -->
+      <h3>📝 አስተያየት ወይም ጥያቄ ላክ</h3>
+      <p style="font-size: 13px; color: #666;">ማንኛውም አይነት አስተያየት ካለዎት እዚህ ይጻፉልን፦</p>
+      <textarea id="feedbackInput" rows="4" placeholder="አስተያየትዎን እዚህ ይጻፉ..."></textarea>
+      <button onclick="sendFeedback()">አስተያየት ላክ (Send Feedback)</button>
     </div>
 
   </div>
@@ -180,6 +193,15 @@
     }
   }
 
+  function logout() {
+    localStorage.removeItem('userEmail');
+    currentUserEmail = null;
+    alert("በትክክል ወጥተዋል!");
+    document.getElementById('emailInput').value = '';
+    document.getElementById('passwordInput').value = '';
+    goToStep('step-auth');
+  }
+
   async function loadUserData() {
     if (!currentUserEmail) return;
 
@@ -192,7 +214,7 @@
     }
   }
 
-  /* TASK & WATCH VIDEO LOGIC (ONE BY ONE & 20s TIMER) */
+  /* TASKS LOGIC */
   async function loadTasks() {
     const res = await fetch(`/api/tasks?email=${currentUserEmail}`);
     availableTasks = await res.json();
@@ -219,7 +241,6 @@
     playerBox.style.display = 'block';
     claimBtn.disabled = true;
 
-    // 20 ሰከንድ ታይመር
     let timeLeft = 20;
     timerStatus.innerText = `እባክዎን ቪዲዮውን ይከታተሉ (${timeLeft}s)...`;
 
@@ -248,13 +269,13 @@
       alert("10 Coin በትክክል ተጨምሮልዎታል!");
       loadUserData();
       currentTaskIndex++;
-      showCurrentTask(); // ቀጣዩን ቪዲዮ ያመጣል
+      showCurrentTask();
     } else {
       alert(data.error);
     }
   }
 
-  /* POST VIDEO & REACH */
+  /* POST VIDEO */
   function calculateReach() {
     const budget = parseInt(document.getElementById('budgetInput').value) || 0;
     const reachEstimate = document.getElementById('reachEstimate');
@@ -316,6 +337,26 @@
         </div>
       `;
     });
+  }
+
+  /* SEND FEEDBACK */
+  async function sendFeedback() {
+    const message = document.getElementById('feedbackInput').value.trim();
+    if (!message) return alert("እባክዎን አስተያየትዎን ይጻፉ!");
+
+    const res = await fetch('/api/feedback', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: currentUserEmail, message })
+    });
+
+    const data = await res.json();
+    if (data.success) {
+      alert(data.message);
+      document.getElementById('feedbackInput').value = '';
+    } else {
+      alert(data.error);
+    }
   }
 </script>
 
