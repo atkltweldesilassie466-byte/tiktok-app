@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GrowTok - Organic TikTok Growth Strategy Tool</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@600;700;800&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+        
+        .feature-card {
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+        
+        .faq-item {
+            transition: all 0.3s ease;
+        }
+        
+        .faq-item.open .faq-answer {
+            display: block;
+        }
+    </style>
+</head>
+<body class="bg-white text-gray-800">
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full bg-white shadow-sm z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-2">
+                    <div class="w-8 h-8 gradient-bg rounded-lg flex items-center justify-center">
+                        <span class="text-white font-bold text-lg">GT</span>
+                    </div>
+                    <span class="text-xl font-bold text-gray-900">GrowTok</span>
+                </div>
+                <div class="hidden md:flex space-x-8">
+                    <a href="#features" class="text-gray-600 hover:text-gray-900 transition">Features</a>
+                    <a href="#faq" class="text-gray-600 hover:text-gray-900 transition">FAQ</a>
+                    <a href="#cta" class="text-gray-600 hover:text-gray-900 transition">Pricing</a>
+                </div>
+                <button class="btn-primary text-white px-6 py-2 rounded-lg font-medium">
+                    Sign In
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="pt-32 pb-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-gray-50 to-white">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div>
+                    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight mb-6 text-gray-900">
+                        Grow Your TikTok Audience Without the <span class="gradient-text">Guesswork</span>
+                    </h1>
+                    <p class="text-lg sm:text-xl text-gray-600 mb-8 leading-relaxed">
+                        Stop posting blindly and start winning. Our all-in-one platform shows you exactly when to post, which hashtags work, and how to engage audiences that actually care about your content. Join 50,000+ creators building authentic followings.
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <button class="btn-primary text-white px-8 py-3 rounded-lg font-semibold text-lg hover:shadow-lg transition">
+                            Start Free 7-Day Trial
+                        </button>
+                        <button class="border-2 border-gray-300 text-gray-900 px-8 py-3 rounded-lg font-semibold text-lg hover:border-gray-400 transition">
+                            Watch Demo
+                        </button>
+                    </div>
+                    <p class="text-sm text-gray-500 mt-4">
+                        ✓ No credit card required • ✓ Full access to all features
+                    </p>
+                </div>
+                <div class="hidden md:block">
+                    <div class="bg-gradient-to-br from-purple-100 to-indigo-100 rounded-2xl p-8 h-96 flex items-center justify-center">
+                        <div class="text-center">
+                            <div class="text-6xl mb-4">📱</div>
+                            <p class="text-gray-600 font-medium">Dashboard Preview Coming Soon</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-20 px-4 sm:px-6 lg:px-8 bg-white">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+                    Powerful Tools to <span class="gradient-text">Accelerate Growth</span>
+                </h2>
+                <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+                    Everything you need to create, analyze, and optimize your TikTok content strategy
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Feature 1 -->
+                <div class="feature-card bg-white border border-gray-200 rounded-xl p-6 hover:border-purple-300">
+                    <div class="text-4xl mb-4">💡</div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Smart Hashtag Generator</h3>
+                    <p class="text-gray-600 leading-relaxed">
+                        Discover high-performance hashtags your audience is actually searching for. Get real-time trending data tailored to your niche—not generic suggestions. Average users see a 3x increase in reach in the first month.
+                    </p>
+                </div>
+
+                <!-- Feature 2 -->
+                <div class="feature-card bg-white border border-gray-200 rounded-xl p-6 hover:border-purple-300">
+                    <div class="text-4xl mb-4">⏰</div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Best Posting Time Analyzer</h3>
+                    <p class="text-gray-600 leading-relaxed">
+                        Our AI analyzes your unique audience behavior to pinpoint exactly when they're most active and engaged. Post once strategically instead of posting 5 times hoping something sticks. Save hours every week.
+                    </p>
+                </div>
+
+                <!-- Feature 3 -->
+                <div class="feature-card bg-white border border-gray-200 rounded-xl p-6 hover:border-purple-300">
+                    <div class="text-4xl mb-4">📅</div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Content Calendar & Scheduler</h3>
+                    <p class="text-gray-600 leading-relaxed">
+                        Plan weeks of content in minutes. Batch create, schedule across multiple times, and maintain consistency without the stress. One dashboard. Total control. Zero last-minute scrambling.
+                    </p>
+                </div>
+
+                <!-- Feature 4 -->
+                <div class="feature-card bg-white border border-gray-200 rounded-xl p-6 hover:border-purple-300">
+                    <div class="text-4xl mb-4">📊</div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Audience Insights & Profile Audit</h3>
+                    <p class="text-gray-600 leading-relaxed">
+                        See who's actually watching (and why). Get instant recommendations to strengthen your bio, optimize your profile, and identify exactly what content resonates. Know your metrics before they matter.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Social Proof Section -->
+    <section class="py-20 px-4 sm:px-6 lg:px-8 bg-gray-50">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+                    Trusted by <span class="gradient-text">50,000+ Creators</span>
+                </h2>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Testimonial 1 -->
+                <div class="bg-white rounded-xl p-8 shadow-sm border border-gray-100">
+                    <div class="flex mb-4">
+                        <span class="text-yellow-400">⭐</span>
+                        <span class="text-yellow-400">⭐</span>
+                        <span class="text-yellow-400">⭐</span>
+                        <span class="text-yellow-400">⭐</span>
+                        <span class="text-yellow-400">⭐</span>
+                    </div>
+                    <p class="text-gray-700 font-medium mb-4">
+                        "I went from 2K to 50K followers in 4 months. The posting time recommendations alone changed everything."
+                    </p>
+                    <p class="text-gray-600 font-semibold">@sarah_fitness</p>
+                    <p class="text-gray-500 text-sm">Fitness Creator</p>
+                </div>
+
+                <!-- Testimonial 2 -->
+                <div class="bg-white rounded-xl p-8 shadow-sm border border-gray-100">
+                    <div class="flex mb-4">
+                        <span class="text-yellow-400">⭐</span>
+                        <span class="text-yellow-400">⭐</span>
+                        <span class="text-yellow-400">⭐</span>
+                        <span class="text-yellow-400">⭐</span>
+                        <span class="text-yellow-400">⭐</span>
+                    </div>
+                    <p class="text-gray-700 font-medium mb-4">
+                        "Finally understand what works. This tool pays for itself in engagement boost alone."
+                    </p>
+                    <p class="text-gray-600 font-semibold">@creative_mike</p>
+                    <p class="text-gray-500 text-sm">Content Creator</p>
+                </div>
+
+                <!-- Testimonial 3 -->
+                <div class="bg-white rounded-xl p-8 shadow-sm border border-gray-100">
+                    <div class="flex mb-4">
+                        <span class="text-yellow-400">⭐</span>
+                        <span class="text-yellow-400">⭐</span>
+                        <span class="text-yellow-400">⭐</span>
+                        <span class="text-yellow-400">⭐</span>
+                        <span class="text-yellow-400">⭐</span>
+                    </div>
+                    <p class="text-gray-700 font-medium mb-4">
+                        "No more guessing. Just results."
+                    </p>
+                    <p class="text-gray-600 font-semibold">@brand_builders</p>
+                    <p class="text-gray-500 text-sm">Brand Growth Specialist</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section id="faq" class="py-20 px-4 sm:px-6 lg:px-8 bg-white">
+        <div class="max-w-3xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+                    Frequently Asked <span class="gradient-text">Questions</span>
+                </h2>
+                <p class="text-lg text-gray-600">
+                    Everything you need to know to get started
+                </p>
+            </div>
+
+            <div class="space-y-4">
+                <!-- FAQ Item 1 -->
+                <div class="faq-item border border-gray-200 rounded-lg overflow-hidden">
+                    <button class="faq-toggle w-full px-6 py-4 text-left font-semibold text-gray-900 hover:bg-gray-50 transition flex justify-between items-center">
+                        <span>Will using a scheduling tool hurt my engagement?</span>
+                        <span class="text-2xl">+</span>
+                    </button>
+                    <div class="faq-answer hidden px-6 pb-4 text-gray-600 bg-gray-50 border-t border-gray-200">
+                        <p>
+                            Nope—the opposite. Posting at times when your audience is actually online increases engagement by 40% on average. Plus, our Smart Scheduler mimics authentic behavior patterns so your posts feel natural, not robotic. Top creators use scheduling tools; it's just strategy.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- FAQ Item 2 -->
+                <div class="faq-item border border-gray-200 rounded-lg overflow-hidden">
+                    <button class="faq-toggle w-full px-6 py-4 text-left font-semibold text-gray-900 hover:bg-gray-50 transition flex justify-between items-center">
+                        <span>How long before I see results?</span>
+                        <span class="text-2xl">+</span>
+                    </button>
+                    <div class="faq-answer hidden px-6 pb-4 text-gray-600 bg-gray-50 border-t border-gray-200">
+                        <p>
+                            Most users see improved engagement within 3-5 days by optimizing posting times and hashtags. Follower growth picks up around week 2-3 as your content reaches the right audiences. We've seen creators 3x their growth in 60 days by following our recommendations.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- FAQ Item 3 -->
+                <div class="faq-item border border-gray-200 rounded-lg overflow-hidden">
+                    <button class="faq-toggle w-full px-6 py-4 text-left font-semibold text-gray-900 hover:bg-gray-50 transition flex justify-between items-center">
+                        <span>Is my account safe? Will TikTok penalize me?</span>
+                        <span class="text-2xl">+</span>
+                    </button>
+                    <div class="faq-answer hidden px-6 pb-4 text-gray-600 bg-gray-50 border-t border-gray-200">
+                        <p>
+                            100% safe. We never access your password or log into your account. We use TikTok's official public API only—the same data TikTok shows you. We're fully compliant with their terms. No bots, no fake engagement, no risk.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- FAQ Item 4 -->
+                <div class="faq-item border border-gray-200 rounded-lg overflow-hidden">
+                    <button class="faq-toggle w-full px-6 py-4 text-left font-semibold text-gray-900 hover:bg-gray-50 transition flex justify-between items-center">
+                        <span>What if I'm just starting out with few followers?</span>
+                        <span class="text-2xl">+</span>
+                    </button>
+                    <div class="faq-answer hidden px-6 pb-4 text-gray-600 bg-gray-50 border-t border-gray-200">
+                        <p>
+                            Perfect—that's actually when strategy matters most. Our Hashtag Generator and Audience Insights work especially well for new creators because they help you find micro-communities hungry for your content. Many of our fastest-growing users started with under 100 followers. The right strategy beats follower count.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section id="cta" class="py-20 px-4 sm:px-6 lg:px-8 gradient-bg">
+        <div class="max-w-4xl mx-auto text-center">
+            <h2 class="text-4xl md:text-5xl font-bold text-white mb-6">
+                Ready to Grow?
+            </h2>
+            <p class="text-xl text-purple-100 mb-8 max-w-2xl mx-auto">
+                Join thousands of creators already using GrowTok to build authentic, engaged audiences. Start free today—no credit card required.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <button class="bg-white text-purple-600 px-10 py-4 rounded-lg font-bold text-lg hover:bg-gray-50 transition shadow-lg">
+                    Claim Your Free Audit
+                </button>
+                <button class="border-2 border-white text-white px-10 py-4 rounded-lg font-bold text-lg hover:bg-white hover:bg-opacity-10 transition">
+                    Get Started For Free
+                </button>
+            </div>
+            <p class="text-purple-100 mt-6">
+                See your untapped growth potential in 60 seconds
+            </p>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-gray-400 py-12 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid md:grid-cols-4 gap-8 mb-8">
+                <div>
+                    <div class="flex items-center space-x-2 mb-4">
+                        <div class="w-6 h-6 bg-purple-500 rounded-lg flex items-center justify-center">
+                            <span class="text-white font-bold text-sm">GT</span>
+                        </div>
+                        <span class="text-white font-bold">GrowTok</span>
+                    </div>
+                    <p class="text-sm">Grow your TikTok audience authentically.</p>
+                </div>
+                <div>
+                    <h4 class="text-white font-semibold mb-4">Product</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#" class="hover:text-white transition">Features</a></li>
+                        <li><a href="#" class="hover:text-white transition">Pricing</a></li>
+                        <li><a href="#" class="hover:text-white transition">Security</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-white font-semibold mb-4">Company</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#" class="hover:text-white transition">About</a></li>
+                        <li><a href="#" class="hover:text-white transition">Blog</a></li>
+                        <li><a href="#" class="hover:text-white transition">Contact</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-white font-semibold mb-4">Legal</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#" class="hover:text-white transition">Privacy</a></li>
+                        <li><a href="#" class="hover:text-white transition">Terms</a></li>
+                        <li><a href="#" class="hover:text-white transition">Cookie Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center">
+                <p class="text-sm">&copy; 2024 GrowTok. All rights reserved.</p>
+                <div class="flex space-x-6 mt-4 md:mt-0">
+                    <a href="#" class="hover:text-white transition">Twitter</a>
+                    <a href="#" class="hover:text-white transition">Instagram</a>
+                    <a href="#" class="hover:text-white transition">TikTok</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // FAQ Toggle Functionality
+        document.querySelectorAll('.faq-toggle').forEach(button => {
+            button.addEventListener('click', () => {
+                const faqItem = button.closest('.faq-item');
+                const isOpen = faqItem.classList.contains('open');
+                
+                // Close all other FAQs
+                document.querySelectorAll('.faq-item').forEach(item => {
+                    item.classList.remove('open');
+                    item.querySelector('.faq-toggle span:last-child').textContent = '+';
+                });
+                
+                // Toggle current FAQ
+                if (!isOpen) {
+                    faqItem.classList.add('open');
+                    button.querySelector('span:last-child').textContent = '−';
+                }
+            });
+        });
+
+        // Smooth Scroll for Navigation Links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                const href = this.getAttribute('href');
+                if (href !== '#' && document.querySelector(href)) {
+                    e.preventDefault();
+                    document.querySelector(href).scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // CTA Button Actions (Replace with your actual signup flow)
+        document.querySelectorAll('.btn-primary, .bg-white.text-purple-600, .border-2.border-white').forEach(button => {
+            button.addEventListener('click', function() {
+                if (!this.closest('nav')) {
+                    console.log('Button clicked - Add your signup flow here');
+                    // Redirect to signup: window.location.href = 'https://your-signup-url.com';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
