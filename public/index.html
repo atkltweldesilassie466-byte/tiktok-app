@@ -42,7 +42,6 @@
     <div class="card">
       <p>👤 ኢሜይል: <b id="userEmail"></b></p>
       <h2>የእርስዎ ኮይን: <span id="coins" style="color: #fe2c55;">0</span> 🪙</h2>
-      <small style="color: green;">🎁 የ 10 Coin ነጻ ስጦታ ተጨምሮልዎታል!</small>
     </div>
 
     <!-- Buy Coins -->
@@ -88,9 +87,16 @@
 </div>
 
 <script>
+  let currentUserEmail = localStorage.getItem('userEmail');
+
   function goToStep(stepId) {
     document.querySelectorAll('.step').forEach(el => el.classList.remove('active'));
     document.getElementById(stepId).classList.add('active');
+  }
+
+  if (currentUserEmail) {
+    goToStep('step-dashboard');
+    loadUserData();
   }
 
   async function register() {
@@ -105,14 +111,20 @@
 
     const data = await res.json();
     if (data.success) {
+      localStorage.setItem('userEmail', email);
+      currentUserEmail = email;
       alert("ምዝገባው ተጠናቋል! 10 Coin ነጻ ስጦታ አግኝተዋል።");
       goToStep('step-dashboard');
       loadUserData();
+    } else {
+      alert(data.error);
     }
   }
 
   async function loadUserData() {
-    const res = await fetch('/api/user');
+    if (!currentUserEmail) return;
+
+    const res = await fetch(`/api/user?email=${currentUserEmail}`);
     const user = await res.json();
 
     if (user.email) {
@@ -148,7 +160,7 @@
     const res = await fetch('/api/add-task', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ url, budget })
+      body: JSON.stringify({ email: currentUserEmail, url, budget })
     });
 
     const data = await res.json();
@@ -176,10 +188,14 @@
 
     tasks.forEach(task => {
       const remaining = task.maxCompletions - task.completedCount;
+      const isDone = task.completedBy && task.completedBy.includes(currentUserEmail);
+
       taskList.innerHTML += `
         <div style="border-bottom: 1px solid #eee; padding: 10px 0;">
           <p><b>የቲክቶክ ቪዲዮ</b> (+10 Coin) — የቀረ ቦታ: ${remaining}/${task.maxCompletions} ሰው</p>
-          <button onclick="playVideo('${task.url}', ${task.id})">ቪዲዮውን ተመልከት</button>
+          <button ${isDone ? 'disabled' : ''} onclick="playVideo('${task.url}', '${task._id}')">
+            ${isDone ? 'ተጠናቋል (Completed)' : 'ቪዲዮውን ተመልከት'}
+          </button>
         </div>
       `;
     });
@@ -223,7 +239,7 @@
     const res = await fetch('/api/complete-task', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ taskId })
+      body: JSON.stringify({ email: currentUserEmail, taskId })
     });
 
     const data = await res.json();
