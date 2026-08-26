@@ -24,11 +24,9 @@
     .logout-btn:hover { background: #333; }
     input, textarea { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ccc; border-radius: 8px; font-size: 15px; font-family: inherit; }
     
-    /* Step Display Controls */
     .step { display: none; }
     .active { display: block; }
 
-    /* Navigation Tabs */
     .tab-nav { display: flex; justify-content: space-around; background: #fff; padding: 10px; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
     .tab-btn { background: none; color: #555; font-size: 13px; padding: 8px; border-radius: 6px; text-align: center; font-weight: bold; width: 23%; cursor: pointer; }
     .tab-btn.active-tab { background: #fe2c55; color: white; }
@@ -62,7 +60,6 @@
   <!-- STEP 3: MAIN DASHBOARD -->
   <div id="step-dashboard" class="step">
     
-    <!-- Navigation Tabs -->
     <div class="tab-nav">
       <div class="tab-btn active-tab" onclick="switchTab('tab-profile')">👤 መረጃ</div>
       <div class="tab-btn" onclick="switchTab('tab-earn')">🎬 ስራዎች</div>
@@ -91,7 +88,7 @@
       </div>
     </div>
 
-    <!-- TAB 2: EARN COINS (TASKS ONE BY ONE) -->
+    <!-- TAB 2: EARN COINS -->
     <div id="tab-earn" class="tab-content card" style="display:none;">
       <h3>🎬 ቪዲዮዎችን አይተው ኮይን ያግኙ</h3>
       <p style="font-size: 13px; color: #666;">* ለእያንዳንዱ ያዩት ቪዲዮ <b>10 ኮይን</b> ያገኛሉ።</p>
@@ -107,7 +104,7 @@
       </div>
     </div>
 
-    <!-- TAB 3: POST VIDEO & MY VIDEOS LIST -->
+    <!-- TAB 3: POST VIDEO -->
     <div id="tab-post" class="tab-content card" style="display:none;">
       <h3>🚀 አዲስ የቲክቶክ ቪዲዮ ይልቀቁ</h3>
       <p style="font-size: 13px; color: #666;">(1 Coin = 2 Views)</p>
@@ -126,13 +123,12 @@
       <div style="text-align: center;">
         <h3>💬 በቴሌግራም ኮይን ለመግዛት</h3>
         <p>በቀጥታ ከአድሚኑ ኮይን ለመግዛት ወይም ለተጨማሪ ጥያቄዎች በቴሌግራም ያናግሩን።</p>
-        <p><b>Username:</b> @wizzy_ermi9i</p>
-        <a href="https://t.me/wizzy_ermi9i" target="_blank" class="telegram-btn">ወደ ቴሌግራም ይመሩ ➔</a>
+        <p><b>Username:</b> @wizzy_ermi</p>
+        <a href="https://t.me/wizzy_ermi" target="_blank" class="telegram-btn">ወደ ቴሌግራም ይመሩ ➔</a>
       </div>
 
       <hr style="margin: 25px 0;">
 
-      <!-- FEEDBACK FORM -->
       <h3>📝 አስተያየት ወይም ጥያቄ ላክ</h3>
       <p style="font-size: 13px; color: #666;">ማንኛውም አይነት አስተያየት ካለዎት እዚህ ይጻፉልን፦</p>
       <textarea id="feedbackInput" rows="4" placeholder="አስተያየትዎን እዚህ ይጻፉ..."></textarea>
@@ -214,7 +210,6 @@
     }
   }
 
-  /* TASKS LOGIC */
   async function loadTasks() {
     const res = await fetch(`/api/tasks?email=${currentUserEmail}`);
     availableTasks = await res.json();
@@ -275,7 +270,6 @@
     }
   }
 
-  /* POST VIDEO */
   function calculateReach() {
     const budget = parseInt(document.getElementById('budgetInput').value) || 0;
     const reachEstimate = document.getElementById('reachEstimate');
@@ -339,7 +333,6 @@
     });
   }
 
-  /* SEND FEEDBACK */
   async function sendFeedback() {
     const message = document.getElementById('feedbackInput').value.trim();
     if (!message) return alert("እባክዎን አስተያየትዎን ይጻፉ!");
