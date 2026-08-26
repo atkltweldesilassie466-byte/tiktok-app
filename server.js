@@ -11,7 +11,7 @@ mongoose.connect(MONGODB_URI)
   .then(() => console.log('MongoDB Connected!'))
   .catch(err => console.error('MongoDB Error:', err));
 
-// Schema (ኢሜይል እና ፓስወርድን አካቶ)
+// Schemas
 const userSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
@@ -29,10 +29,18 @@ const taskSchema = new mongoose.Schema({
   completedBy: [{ type: String }]
 });
 
+// አስተያየት መያዣ (Feedback Schema)
+const feedbackSchema = new mongoose.Schema({
+  email: { type: String, required: true },
+  message: { type: String, required: true },
+  createdAt: { type: Date, default: Date.now }
+});
+
 const User = mongoose.model('User', userSchema);
 const Task = mongoose.model('Task', taskSchema);
+const Feedback = mongoose.model('Feedback', feedbackSchema);
 
-// አጭር ወይም ረጅም የቲክቶክ ሊንክን ወደ ID መቀየር
+// የቲክቶክ ሊንክን ወደ ID መቀየር
 async function resolveTikTokVideoId(url) {
   let match = url.match(/(\d{15,20})/);
   if (match) return match[1];
@@ -53,7 +61,7 @@ async function resolveTikTokVideoId(url) {
   }
 }
 
-// ምዝገባ እና ሎጊን (Auth)
+// ምዝገባ እና ሎጊን
 app.post('/api/auth', async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -117,7 +125,7 @@ app.post('/api/add-task', async (req, res) => {
   }
 });
 
-// ተጠቃሚው ያላያቸውን ስራዎች ብቻ ማምጫ
+// ስራዎችን ማምጫ
 app.get('/api/tasks', async (req, res) => {
   try {
     const { email } = req.query;
@@ -131,7 +139,7 @@ app.get('/api/tasks', async (req, res) => {
   }
 });
 
-// ተጠቃሚው የለቀቃቸውን ቪዲዮዎች ማምጫ
+// የለቀቋቸውን ቪዲዮዎች ማምጫ
 app.get('/api/my-tasks', async (req, res) => {
   try {
     const { email } = req.query;
@@ -165,6 +173,21 @@ app.post('/api/complete-task', async (req, res) => {
     res.json({ success: true, coins: user.coins });
   } catch (err) {
     res.status(500).json({ error: "ስራውን ማጠናቀቅ አልተቻለም!" });
+  }
+});
+
+// አስተያየት መቀበያ API
+app.post('/api/feedback', async (req, res) => {
+  try {
+    const { email, message } = req.body;
+    if (!message) return res.status(400).json({ error: "እባክዎን አስተያየትዎን ይጻፉ!" });
+
+    const newFeedback = new Feedback({ email, message });
+    await newFeedback.save();
+
+    res.json({ success: true, message: "አስተያየትዎ በትክክል ተልኳል! አመሰግናለሁ።" });
+  } catch (err) {
+    res.status(500).json({ error: "አስተያየቱን መላክ አልተቻለም!" });
   }
 });
 
