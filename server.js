@@ -6,19 +6,20 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 app.use(express.static('public'));
 
-// የ MongoDB ዳታቤዝ ግንኙነት
 const MONGODB_URI = process.env.MONGODB_URI;
 mongoose.connect(MONGODB_URI)
-  .then(() => console.log('MongoDB Successfully Connected!'))
-  .catch(err => console.error('MongoDB Connection Error:', err));
+  .then(() => console.log('MongoDB Connected!'))
+  .catch(err => console.error('MongoDB Error:', err));
 
-// Schema እና Model
+// Schema (ኢሜይል እና ፓስወርድን አካቶ)
 const userSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
+  password: { type: String, required: true },
   coins: { type: Number, default: 10 }
 });
 
 const taskSchema = new mongoose.Schema({
+  ownerEmail: { type: String, required: true },
   url: { type: String, required: true },
   videoId: { type: String, required: true },
   budget: { type: Number, required: true },
@@ -31,7 +32,7 @@ const taskSchema = new mongoose.Schema({
 const User = mongoose.model('User', userSchema);
 const Task = mongoose.model('Task', taskSchema);
 
-// አጭር ወይም ረጅም ሊንክን ወደ Video ID የመቀየር ተግባር
+// አጭር ወይም ረጅም የቲክቶክ ሊንክን ወደ ID መቀየር
 async function resolveTikTokVideoId(url) {
   let match = url.match(/(\d{15,20})/);
   if (match) return match[1];
@@ -48,23 +49,27 @@ async function resolveTikTokVideoId(url) {
     match = finalUrl.match(/(\d{15,20})/);
     return match ? match[1] : null;
   } catch (err) {
-    console.error('URL Resolve Error:', err);
     return null;
   }
 }
 
-// APIs
-app.post('/api/register', async (req, res) => {
+// ምዝገባ እና ሎጊን (Auth)
+app.post('/api/auth', async (req, res) => {
   try {
-    const { email } = req.body;
-    if (!email) return res.status(400).json({ error: "እባክዎን ኢሜይል ያስገቡ!" });
+    const { email, password } = req.body;
+    if (!email || !password) return res.status(400).json({ error: "እባክዎን ኢሜይል እና ፓስወርድ ያስገቡ!" });
 
     let user = await User.findOne({ email });
-    if (!user) {
-      user = new User({ email, coins: 10 });
+    if (user) {
+      if (user.password !== password) {
+        return res.status(400).json({ error: "የተሳሳተ ፓስወርድ ነው!" });
+      }
+      return res.json({ success: true, user });
+    } else {
+      user = new User({ email, password, coins: 10 });
       await user.save();
+      return res.json({ success: true, user });
     }
-    res.json({ success: true, user });
   } catch (err) {
     res.status(500).json({ error: "የሰርቨር ስህተት ተፈጥሯል!" });
   }
@@ -81,26 +86,23 @@ app.get('/api/user', async (req, res) => {
   }
 });
 
+// አዲስ ቪዲዮ መለቀቂያ
 app.post('/api/add-task', async (req, res) => {
   try {
     const { email, url, budget } = req.body;
     if (budget < 100) return res.status(400).json({ error: "ቪዲዮ ለመለቀቅ ቢያንስ 100 ኮይን ያስፈልጋል!" });
 
-    // አጭር ሊንክ ከሆነ ወደ Video ID መቀየር
     const videoId = await resolveTikTokVideoId(url);
-    if (!videoId) {
-      return res.status(400).json({ error: "ትክክለኛ የቲክቶክ ቪዲዮ ሊንክ ማግኘት አልተቻለም! እባክዎን ሊንኩን ያረጋግጡ።" });
-    }
+    if (!videoId) return res.status(400).json({ error: "ትክክለኛ የቲክቶክ ቪዲዮ ሊንክ አይደለም!" });
 
     const user = await User.findOne({ email });
-    if (!user || user.coins < budget) {
-      return res.status(400).json({ error: "በቂ ኮይን የለዎትም!" });
-    }
+    if (!user || user.coins < budget) return res.status(400).json({ error: "በቂ ኮይን የለዎትም!" });
 
     user.coins -= budget;
     await user.save();
 
     const newTask = new Task({
+      ownerEmail: email,
       url,
       videoId,
       budget,
@@ -115,15 +117,32 @@ app.post('/api/add-task', async (req, res) => {
   }
 });
 
+// ተጠቃሚው ያላያቸውን ስራዎች ብቻ ማምጫ
 app.get('/api/tasks', async (req, res) => {
   try {
-    const tasks = await Task.find({ $expr: { $lt: ["$completedCount", "$maxCompletions"] } });
+    const { email } = req.query;
+    const tasks = await Task.find({
+      completedBy: { $ne: email },
+      $expr: { $lt: ["$completedCount", "$maxCompletions"] }
+    });
     res.json(tasks);
   } catch (err) {
     res.status(500).json({ error: "ስራዎችን ማግኘት አልተቻለም!" });
   }
 });
 
+// ተጠቃሚው የለቀቃቸውን ቪዲዮዎች ማምጫ
+app.get('/api/my-tasks', async (req, res) => {
+  try {
+    const { email } = req.query;
+    const tasks = await Task.find({ ownerEmail: email });
+    res.json(tasks);
+  } catch (err) {
+    res.status(500).json({ error: "የቪዲዮ መረጃ ማግኘት አልተቻለም!" });
+  }
+});
+
+// ቪዲዮ አይቶ ኮይን መቀበያ
 app.post('/api/complete-task', async (req, res) => {
   try {
     const { email, taskId } = req.body;
@@ -134,10 +153,6 @@ app.post('/api/complete-task', async (req, res) => {
 
     if (task.completedBy.includes(email)) {
       return res.status(400).json({ error: "ይህንን ቪዲዮ ቀደም ብለው ተመልከተዋል!" });
-    }
-
-    if (task.completedCount >= task.maxCompletions) {
-      return res.status(400).json({ error: "የዚህ ቪዲዮ የስራ ቦታ አልቋል!" });
     }
 
     task.completedCount += 1;
