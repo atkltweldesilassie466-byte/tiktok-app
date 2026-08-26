@@ -20,6 +20,7 @@ const userSchema = new mongoose.Schema({
 
 const taskSchema = new mongoose.Schema({
   url: { type: String, required: true },
+  videoId: { type: String, required: true },
   budget: { type: Number, required: true },
   maxCompletions: { type: Number, required: true },
   completedCount: { type: Number, default: 0 },
@@ -29,6 +30,28 @@ const taskSchema = new mongoose.Schema({
 
 const User = mongoose.model('User', userSchema);
 const Task = mongoose.model('Task', taskSchema);
+
+// አጭር ወይም ረጅም ሊንክን ወደ Video ID የመቀየር ተግባር
+async function resolveTikTokVideoId(url) {
+  let match = url.match(/(\d{15,20})/);
+  if (match) return match[1];
+
+  try {
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+      },
+      redirect: 'follow'
+    });
+    const finalUrl = response.url;
+    match = finalUrl.match(/(\d{15,20})/);
+    return match ? match[1] : null;
+  } catch (err) {
+    console.error('URL Resolve Error:', err);
+    return null;
+  }
+}
 
 // APIs
 app.post('/api/register', async (req, res) => {
@@ -63,6 +86,12 @@ app.post('/api/add-task', async (req, res) => {
     const { email, url, budget } = req.body;
     if (budget < 100) return res.status(400).json({ error: "ቪዲዮ ለመለቀቅ ቢያንስ 100 ኮይን ያስፈልጋል!" });
 
+    // አጭር ሊንክ ከሆነ ወደ Video ID መቀየር
+    const videoId = await resolveTikTokVideoId(url);
+    if (!videoId) {
+      return res.status(400).json({ error: "ትክክለኛ የቲክቶክ ቪዲዮ ሊንክ ማግኘት አልተቻለም! እባክዎን ሊንኩን ያረጋግጡ።" });
+    }
+
     const user = await User.findOne({ email });
     if (!user || user.coins < budget) {
       return res.status(400).json({ error: "በቂ ኮይን የለዎትም!" });
@@ -73,6 +102,7 @@ app.post('/api/add-task', async (req, res) => {
 
     const newTask = new Task({
       url,
+      videoId,
       budget,
       maxCompletions: budget * 2,
       rewardPerWatch: 10
