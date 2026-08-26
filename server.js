@@ -1,5 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const TelegramBot = require('node-telegram-bot-api');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -29,7 +30,6 @@ const taskSchema = new mongoose.Schema({
   completedBy: [{ type: String }]
 });
 
-// አስተያየት መያዣ (Feedback Schema)
 const feedbackSchema = new mongoose.Schema({
   email: { type: String, required: true },
   message: { type: String, required: true },
@@ -39,6 +39,14 @@ const feedbackSchema = new mongoose.Schema({
 const User = mongoose.model('User', userSchema);
 const Task = mongoose.model('Task', taskSchema);
 const Feedback = mongoose.model('Feedback', feedbackSchema);
+
+// የቴሌግራም ቦት (TOKEN ካለህ process.env.BOT_TOKEN ወይም እዚህ ጋር ማስገባት ትችላለህ)
+if (process.env.BOT_TOKEN) {
+  const bot = new TelegramBot(process.env.BOT_TOKEN, { polling: true });
+  bot.onText(/\/start/, (msg) => {
+    bot.sendMessage(msg.chat.id, 'እንኳን ወደ TikTok Coin Bot በደህና መጡ! 👋\n\nኮይን ለመግዛት ወይም ጥያቄ ለመጠየቅ አድሚኑን ያናግሩ፦ @wizzy_ermi');
+  });
+}
 
 // የቲክቶክ ሊንክን ወደ ID መቀየር
 async function resolveTikTokVideoId(url) {
@@ -61,7 +69,7 @@ async function resolveTikTokVideoId(url) {
   }
 }
 
-// ምዝገባ እና ሎጊን
+// Auth API
 app.post('/api/auth', async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -94,7 +102,7 @@ app.get('/api/user', async (req, res) => {
   }
 });
 
-// አዲስ ቪዲዮ መለቀቂያ
+// Tasks API
 app.post('/api/add-task', async (req, res) => {
   try {
     const { email, url, budget } = req.body;
@@ -125,7 +133,6 @@ app.post('/api/add-task', async (req, res) => {
   }
 });
 
-// ስራዎችን ማምጫ
 app.get('/api/tasks', async (req, res) => {
   try {
     const { email } = req.query;
@@ -139,7 +146,6 @@ app.get('/api/tasks', async (req, res) => {
   }
 });
 
-// የለቀቋቸውን ቪዲዮዎች ማምጫ
 app.get('/api/my-tasks', async (req, res) => {
   try {
     const { email } = req.query;
@@ -150,7 +156,6 @@ app.get('/api/my-tasks', async (req, res) => {
   }
 });
 
-// ቪዲዮ አይቶ ኮይን መቀበያ
 app.post('/api/complete-task', async (req, res) => {
   try {
     const { email, taskId } = req.body;
@@ -176,7 +181,7 @@ app.post('/api/complete-task', async (req, res) => {
   }
 });
 
-// አስተያየት መቀበያ API
+// Feedback API
 app.post('/api/feedback', async (req, res) => {
   try {
     const { email, message } = req.body;
